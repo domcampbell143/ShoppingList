@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:animateLayoutChanges="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="200dp"
+        android:inputType="text"
+        android:id="@+id/fragment_list_edittext_add"
+        android:visibility="gone"
+        tools:text="New item"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_list_button_add"
+        android:src="@drawable/ic_add_white_24dp"
+        android:background="@drawable/round_button_green"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clear_white_24dp"
+        android:visibility="gone"
+        android:id="@+id/fragment_list_button_add_cancel"
+        android:background="@drawable/round_button_red"/>
+
+</LinearLayout>

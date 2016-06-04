@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ShoppingList</string>
+    <string name="empty_edit_text">Enter some text</string>
+</resources>
