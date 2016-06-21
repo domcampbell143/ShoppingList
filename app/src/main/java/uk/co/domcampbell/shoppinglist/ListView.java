@@ -1,5 +1,7 @@
 package uk.co.domcampbell.shoppinglist;
 
+import android.content.Context;
+
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 
 /**
@@ -13,13 +15,19 @@ public interface ListView {
 
     void displayNoTextError();
 
-    void notifyItemRemoved(ListItem item);
+    void notifyItemRemoved(int index);
 
     void notifyItemChanged(ListItem item);
 
     /***
-     * Notify the activity that the new item hsa been added. Should clean up the create item view
+     * Notify the activity that the new item has been added. Should clean up the create item view
      * @param item The added list item
      */
     void notifyItemAdded(ListItem item);
+
+    void notifyItemMoved(Integer from, Integer to);
+
+    void displayDeleteListItemView(ListItem item);
+
+    void notifyListChanged();
 }

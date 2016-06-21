@@ -1,10 +1,12 @@
 package uk.co.domcampbell.shoppinglist;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,16 +14,19 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import uk.co.domcampbell.shoppinglist.database.SQLiteListDatabase;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
 
@@ -39,7 +44,7 @@ public class ListFragment extends Fragment implements ListView {
     private ImageButton mCancelAddButton;
 
     private ShoppingList mShoppingList;
-    private ListPresenter mPresenter;
+    @Inject ListPresenter mPresenter;
 
     public static ListFragment newInstance(){
         ListFragment fragment = new ListFragment();
@@ -50,9 +55,9 @@ public class ListFragment extends Fragment implements ListView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mShoppingList = new ShoppingList("Test list", new ArrayList<ListItem>());
-        mPresenter = new ListPresenter(this, mShoppingList);
-
+        ((ShoppingListApplication) getActivity().getApplication()).getComponent().inject(this);
+        mPresenter.setView(this);
+        mShoppingList = mPresenter.fetchList();
         getActivity().setTitle(mShoppingList.getListName());
     }
 
@@ -69,7 +74,7 @@ public class ListFragment extends Fragment implements ListView {
             @Override
             public void onAnimationFinished(RecyclerView.ViewHolder viewHolder) {
                 super.onAnimationFinished(viewHolder);
-                removeCreateItemView();
+                mPresenter.cancelNewItemClicked();
             }
         });
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.Callback(){
@@ -118,8 +123,13 @@ public class ListFragment extends Fragment implements ListView {
     }
 
     @Override
-    public void notifyItemRemoved(ListItem item) {
-        mAdapter.notifyItemRemoved(mShoppingList.getList().indexOf(item));
+    public void notifyListChanged() {
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyItemRemoved(int index) {
+        mAdapter.notifyItemRemoved(index);
     }
 
     @Override
@@ -130,6 +140,11 @@ public class ListFragment extends Fragment implements ListView {
     @Override
     public void notifyItemAdded(ListItem item) {
         mAdapter.notifyItemInserted(mShoppingList.getList().indexOf(item));
+    }
+
+    @Override
+    public void notifyItemMoved(Integer from, Integer to) {
+        mAdapter.notifyItemMoved(from,to);
     }
 
     @Override
@@ -155,24 +170,49 @@ public class ListFragment extends Fragment implements ListView {
         Toast.makeText(getActivity(), getString(R.string.empty_edit_text), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void displayDeleteListItemView(final ListItem item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Remove " + item.getItemName() + " from the list?")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.deleteListItem(item);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
+    }
 
-    private class ListItemHolder extends RecyclerView.ViewHolder {
+
+
+    private class ListItemHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         private ListItem mListItem;
-        private TextView mTextView;
+        private TextView mNameTextView;
+        private TextView mCompletedDateTextView;
 
         public ListItemHolder(View itemView){
             super(itemView);
-            mTextView = (TextView)itemView.findViewById(R.id.list_item_name);
+            mNameTextView = (TextView)itemView.findViewById(R.id.list_item_name);
+            mCompletedDateTextView = (TextView)itemView.findViewById(R.id.list_item_completed_date);
+            itemView.setOnLongClickListener(this);
         }
 
         public void bindListItem(ListItem item){
             mListItem = item;
-            mTextView.setText(item.getItemName());
+            mNameTextView.setText(item.getItemName());
             if (item.isCompleted()) {
-                mTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                mNameTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                mCompletedDateTextView.setText(DateFormat.getDateInstance().format(item.getCompletedDate()));
             } else {
-                mTextView.setPaintFlags(0);
+                mNameTextView.setPaintFlags(0);
+                mCompletedDateTextView.setText("");
             }
         }
 
@@ -180,6 +220,11 @@ public class ListFragment extends Fragment implements ListView {
             mPresenter.listItemSwiped(mListItem);
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            mPresenter.onItemLongClicked(mListItem);
+            return true;
+        }
     }
 
 
@@ -228,4 +273,5 @@ public class ListFragment extends Fragment implements ListView {
             return mShoppingList.getList().size() + 1;
         }
     }
+
 }
