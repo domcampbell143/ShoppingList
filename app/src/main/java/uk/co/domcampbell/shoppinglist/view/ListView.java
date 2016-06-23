@@ -1,4 +1,4 @@
-package uk.co.domcampbell.shoppinglist;
+package uk.co.domcampbell.shoppinglist.view;
 
 import android.content.Context;
 

@@ -1,4 +1,4 @@
-package uk.co.domcampbell.shoppinglist;
+package uk.co.domcampbell.shoppinglist.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +15,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,18 +22,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
-import uk.co.domcampbell.shoppinglist.database.SQLiteListDatabase;
+import uk.co.domcampbell.shoppinglist.ListPresenter;
+import uk.co.domcampbell.shoppinglist.R;
+import uk.co.domcampbell.shoppinglist.ShoppingListApplication;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
+
 
 /**
  * Created by Dominic on 4/06/16.
  */
 public class ListFragment extends Fragment implements ListView {
+    private static final String ARG_UUID = "list_uuid";
 
     private RecyclerView mRecyclerView;
     private ListItemAdapter mAdapter;
@@ -44,27 +48,34 @@ public class ListFragment extends Fragment implements ListView {
     private ImageButton mCancelAddButton;
 
     private ShoppingList mShoppingList;
-    @Inject ListPresenter mPresenter;
+    @Inject
+    ListPresenter mPresenter;
 
-    public static ListFragment newInstance(){
+    public static ListFragment newInstance(UUID uuid){
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_UUID, uuid);
         ListFragment fragment = new ListFragment();
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UUID uuid = (UUID) getArguments().getSerializable(ARG_UUID);
 
-        ((ShoppingListApplication) getActivity().getApplication()).getComponent().inject(this);
+        ((ShoppingListApplication) getActivity().getApplication()).getListPresenterComponent(uuid).inject(this);
         mPresenter.setView(this);
         mShoppingList = mPresenter.fetchList();
-        getActivity().setTitle(mShoppingList.getListName());
+        //getActivity().setTitle(mShoppingList.getListName());
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
+
+        ((TextView)v.findViewById(R.id.fragment_list_title)).setText(mShoppingList.getListName());
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -150,6 +161,7 @@ public class ListFragment extends Fragment implements ListView {
     @Override
     public void displayCreateItemView() {
         mEditText.setVisibility(View.VISIBLE);
+        mAddButton.setBackgroundResource(R.drawable.round_button_green);
         mAddButton.setImageResource(R.drawable.ic_done_white_24dp);
         mCancelAddButton.setVisibility(View.VISIBLE);
     }
@@ -159,6 +171,7 @@ public class ListFragment extends Fragment implements ListView {
         mEditText.setText("");
         mEditText.setVisibility(View.GONE);
         mCancelAddButton.setVisibility(View.GONE);
+        mAddButton.setBackgroundResource(R.drawable.round_button_pink);
         mAddButton.setImageResource(R.drawable.ic_add_white_24dp);
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);

@@ -89,6 +89,12 @@ public class SQLiteListDatabase implements ListDatabase {
         mDatabase.delete(DbSchema.ShoppingListTable.NAME, DbSchema.ShoppingListTable.Cols.UUID + " = ?", whereArgs);
     }
 
+    @Override
+    public void updateList(ShoppingList shoppingList) {
+        ContentValues values= getContentValues(shoppingList);
+        mDatabase.update(DbSchema.ShoppingListTable.NAME,values, DbSchema.ShoppingListTable.Cols.UUID + " = ?", new String[]{shoppingList.getUUID().toString()});
+    }
+
     /***
      * Returns a list of all ShoppingLists in the database. Each will have null mList. Use getShoppingList(UUID uuid) for the mList.
      *

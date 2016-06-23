@@ -37,6 +37,16 @@ public class FirebaseListService implements ListService {
     }
 
     @Override
+    public void updateListName(ShoppingList shoppingList) {
+        addList(shoppingList);
+    }
+
+    @Override
+    public void deleteShoppingList(ShoppingList shoppingList) {
+        mBaseRef.child(shoppingList.getUUID().toString()).removeValue();
+    }
+
+    @Override
     public void addItemToList(ListItem item,ShoppingList shoppingList) {
         updateItemInList(item,shoppingList);
     }

@@ -1,5 +1,7 @@
 package uk.co.domcampbell.shoppinglist;
 
+import java.util.UUID;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -13,9 +15,14 @@ import uk.co.domcampbell.shoppinglist.network.ListService;
 @Module
 public class ListPresenterModule {
 
+    UUID mUUID;
+
+    public ListPresenterModule(UUID uuid){
+        mUUID= uuid;
+    }
+
     @Provides
-    @Singleton
     ListPresenter providesListPresenter(ListDatabase listDatabase, ListService listService){
-        return new ListPresenter(listDatabase, listService);
+        return new ListPresenter(listDatabase, listService, mUUID);
     }
 }

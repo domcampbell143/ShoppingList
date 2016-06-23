@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.firebase.client.Firebase;
 
+import java.util.UUID;
+
 import uk.co.domcampbell.shoppinglist.database.DbModule;
 import uk.co.domcampbell.shoppinglist.network.NetworkModule;
 
@@ -13,6 +15,7 @@ import uk.co.domcampbell.shoppinglist.network.NetworkModule;
 public class ShoppingListApplication extends Application {
 
     private MyComponent mComponent;
+    private ListPresenterComponent mListPresenterComponent;
 
     @Override
     public void onCreate() {
@@ -22,11 +25,20 @@ public class ShoppingListApplication extends Application {
         mComponent = DaggerMyComponent.builder()
                 .dbModule(new DbModule(this))
                 .networkModule(new NetworkModule())
-                .listPresenterModule(new ListPresenterModule())
                 .build();
     }
 
-    public MyComponent getComponent(){
-        return mComponent;
+    public ListPresenterComponent getListPresenterComponent(UUID uuid){
+        return DaggerListPresenterComponent.builder()
+                .myComponent(mComponent)
+                .listPresenterModule(new ListPresenterModule(uuid))
+                .build();
+    }
+
+    public HomePresenterComponent getHomePresenterComponent(){
+        return DaggerHomePresenterComponent.builder()
+                .myComponent(mComponent)
+                .homePresenterModule(new HomePresenterModule())
+                .build();
     }
 }

@@ -23,4 +23,6 @@ public interface ListDatabase {
     List<ShoppingList> getShoppingLists();
 
     ShoppingList getShoppingList(UUID uuid);
+
+    void updateList(ShoppingList shoppingList);
 }

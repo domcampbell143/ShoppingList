@@ -13,6 +13,8 @@ public interface ListService {
 
     void addList(ShoppingList shoppingList);
 
+    void updateListName(ShoppingList shoppingList);
+
     void addItemToList(ListItem item,ShoppingList shoppingList);
 
     void removeItemFromList(ListItem item,ShoppingList shoppingList);
@@ -20,6 +22,8 @@ public interface ListService {
     void updateItemInList(ListItem item,ShoppingList shoppingList);
 
     void fetchList(ShoppingList shoppingList,Callback callback);
+
+    void deleteShoppingList(ShoppingList shoppingList);
 
     public interface Callback {
         void onItemAdded(ListItem item);

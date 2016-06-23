@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">ShoppingList</string>
     <string name="empty_edit_text">Enter some text</string>
+    <string name="rename_shopping_list">Rename %1$s</string>
+    <string name="name_shopping_list">Name the new shopping list</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="transition_list_title">transition_list_title</string>
+    <string-array name="context_shopping_list">
+        <item>Rename</item>
+        <item>Delete</item>
+    </string-array>
 </resources>

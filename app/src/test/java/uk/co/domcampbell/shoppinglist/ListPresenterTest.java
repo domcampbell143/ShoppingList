@@ -18,6 +18,7 @@ import uk.co.domcampbell.shoppinglist.database.ListDatabase;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
 import uk.co.domcampbell.shoppinglist.network.ListService;
+import uk.co.domcampbell.shoppinglist.view.ListView;
 
 
 /**
@@ -45,10 +46,9 @@ public class ListPresenterTest {
     public void setUp() {
         List<ShoppingList> lists = new ArrayList<>();
         lists.add(new ShoppingList("dummy", new ArrayList<ListItem>()));
-        Mockito.when(mListDatabase.getShoppingLists()).thenReturn(lists);
         Mockito.when(mListDatabase.getShoppingList(Matchers.any(UUID.class))).thenReturn(mShoppingList);
 
-        mListPresenter = new ListPresenter(mListDatabase, mListService);
+        mListPresenter = new ListPresenter(mListDatabase, mListService, new UUID(0,0));
         mListPresenter.setView(mView);
 
     }

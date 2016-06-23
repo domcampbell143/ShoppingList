@@ -1,20 +1,15 @@
 package uk.co.domcampbell.shoppinglist;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
-import uk.co.domcampbell.shoppinglist.database.SQLiteListDatabase;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
-import uk.co.domcampbell.shoppinglist.network.FirebaseListService;
 import uk.co.domcampbell.shoppinglist.network.ListService;
+import uk.co.domcampbell.shoppinglist.view.ListView;
 
 /**
  * Created by Dominic on 2/06/16.
@@ -30,16 +25,10 @@ public class ListPresenter {
 
     boolean addEditTextVisible=false;
 
-    public ListPresenter(ListDatabase listDatabase, ListService listService) {
+    public ListPresenter(ListDatabase listDatabase, ListService listService, UUID uuid) {
         mListDatabase = listDatabase;
         mListService = listService;
-        List<ShoppingList> shoppingLists = mListDatabase.getShoppingLists();
-        if (shoppingLists.size()==0){
-            mShoppingList = new ShoppingList(UUID.fromString("9b74a8a5-1424-4832-8ef3-db4a2f45225c"),"Test list", new ArrayList<ListItem>());
-            mListDatabase.addShoppingList(mShoppingList);
-        } else {
-            mShoppingList = mListDatabase.getShoppingList(shoppingLists.get(0).getUUID());
-        }
+        mShoppingList = mListDatabase.getShoppingList(uuid);
     }
 
     public void setView(ListView listView){
