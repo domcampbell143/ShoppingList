@@ -2,6 +2,7 @@ package uk.co.domcampbell.shoppinglist.view;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -26,6 +30,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import uk.co.domcampbell.shoppinglist.ListActivity;
 import uk.co.domcampbell.shoppinglist.ListPresenter;
 import uk.co.domcampbell.shoppinglist.R;
 import uk.co.domcampbell.shoppinglist.ShoppingListApplication;
@@ -67,16 +72,14 @@ public class ListFragment extends Fragment implements ListView {
         ((ShoppingListApplication) getActivity().getApplication()).getListPresenterComponent(uuid).inject(this);
         mPresenter.setView(this);
         mShoppingList = mPresenter.fetchList();
-        //getActivity().setTitle(mShoppingList.getListName());
+        getActivity().setTitle(mShoppingList.getListName());
+        setHasOptionsMenu(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-
-        ((TextView)v.findViewById(R.id.fragment_list_title)).setText(mShoppingList.getListName());
-
         mRecyclerView = (RecyclerView) v.findViewById(R.id.fragment_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new ListItemAdapter(mShoppingList);
@@ -134,9 +137,22 @@ public class ListFragment extends Fragment implements ListView {
     }
 
     @Override
-    public void notifyListChanged() {
-        mAdapter.notifyDataSetChanged();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_list, menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_share:
+                mPresenter.onShareClicked();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public void notifyItemRemoved(int index) {
@@ -202,7 +218,11 @@ public class ListFragment extends Fragment implements ListView {
         builder.create().show();
     }
 
-
+    @Override
+    public void launchShareAction() {
+        Intent intent = ListActivity.shareIntent(getActivity(),mShoppingList);
+        startActivity(intent);
+    }
 
     private class ListItemHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 

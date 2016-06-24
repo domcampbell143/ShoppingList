@@ -11,10 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".ShoppingListApplication">
-        <activity android:name=".view.ListActivity"
-            android:theme="@style/NoActionBar">
+        <activity android:name=".ListActivity">
+            <intent-filter>
+                <data android:scheme="http"
+                    android:host="domcampbell.co.uk"
+                    android:pathPrefix="/shoppinglist"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
-        <activity android:name=".view.HomeActivity">
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

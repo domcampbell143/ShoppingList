@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
+import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 import uk.co.domcampbell.shoppinglist.view.HomeView;
@@ -57,7 +58,7 @@ public class HomePresenterTest {
 
         mHomePresenter.onListLongClicked(mShoppingList);
 
-        Mockito.verify(mHomeView).displayContextDialog(mShoppingList);
+        Mockito.verify(mHomeView).displayContextView(mShoppingList);
     }
 
     @Test
@@ -65,7 +66,7 @@ public class HomePresenterTest {
 
         mHomePresenter.onListRenameClicked(mShoppingList);
 
-        Mockito.verify(mHomeView).displayRenameDialog(mShoppingList);
+        Mockito.verify(mHomeView).displayRenameView(mShoppingList);
     }
 
     @Test
@@ -85,7 +86,7 @@ public class HomePresenterTest {
 
         mHomePresenter.onCreateNewListClicked();
 
-        Mockito.verify(mHomeView).displayNewListDialog();
+        Mockito.verify(mHomeView).displayNewListView();
     }
 
     @Test

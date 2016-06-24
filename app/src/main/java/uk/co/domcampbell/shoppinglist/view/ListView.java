@@ -29,5 +29,5 @@ public interface ListView {
 
     void displayDeleteListItemView(ListItem item);
 
-    void notifyListChanged();
+    void launchShareAction();
 }

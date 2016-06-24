@@ -145,7 +145,7 @@ public class ListPresenterTest {
         //when
         ShoppingList shoppingList = mListPresenter.fetchList();
         //then
-        Mockito.verify(mListService).fetchList(Matchers.eq(mShoppingList),Matchers.isA(ListService.Callback.class));
+        Mockito.verify(mListService).fetchListItems(Matchers.eq(mShoppingList),Matchers.isA(ListService.ItemCallback.class));
         assertNotNull(shoppingList);
     }
 

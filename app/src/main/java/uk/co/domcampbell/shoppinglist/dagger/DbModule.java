@@ -1,4 +1,4 @@
-package uk.co.domcampbell.shoppinglist.database;
+package uk.co.domcampbell.shoppinglist.dagger;
 
 import android.app.Application;
 
@@ -6,6 +6,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import uk.co.domcampbell.shoppinglist.database.ListDatabase;
+import uk.co.domcampbell.shoppinglist.database.SQLiteListDatabase;
 
 /**
  * Created by Dominic on 21/06/16.

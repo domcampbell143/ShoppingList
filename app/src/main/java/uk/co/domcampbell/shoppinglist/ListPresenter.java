@@ -1,8 +1,6 @@
 package uk.co.domcampbell.shoppinglist;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
@@ -84,7 +82,7 @@ public class ListPresenter {
 
 
     public ShoppingList fetchList() {
-        mListService.fetchList(mShoppingList, new ListService.Callback() {
+        mListService.fetchListItems(mShoppingList, new ListService.ItemCallback() {
             @Override
             public void onItemAdded(ListItem item) {
                 if (mShoppingList.getList().contains(item)){
@@ -128,5 +126,9 @@ public class ListPresenter {
 
     public void onItemLongClicked(ListItem listItem) {
         mView.displayDeleteListItemView(listItem);
+    }
+
+    public void onShareClicked() {
+        mView.launchShareAction();
     }
 }

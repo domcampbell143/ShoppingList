@@ -9,7 +9,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import uk.co.domcampbell.shoppinglist.HomePresenter;
+import uk.co.domcampbell.shoppinglist.ListActivity;
 import uk.co.domcampbell.shoppinglist.R;
 import uk.co.domcampbell.shoppinglist.ShoppingListApplication;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
@@ -39,7 +39,6 @@ public class HomeFragment extends Fragment implements HomeView {
     private ShoppingListAdapter mAdapter;
     private AlertDialog mAlertDialog;
 
-    private TextView mTransitionView;
 
     public static HomeFragment newInstance(){
         return new HomeFragment();
@@ -77,17 +76,11 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public void launchListActivity(ShoppingList shoppingList) {
         Intent intent = ListActivity.newIntent(getActivity(), shoppingList);
-        String transitionName = getString(R.string.transition_list_title);
-        ActivityOptionsCompat options =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        mTransitionView,   // The view which starts the transition
-                        transitionName    // The transitionName of the view we’re transitioning to
-                );
-        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        startActivity(intent);
     }
 
     @Override
-    public void displayRenameDialog(final ShoppingList shoppingList) {
+    public void displayRenameView(final ShoppingList shoppingList) {
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.rename_shopping_list, shoppingList.getListName()));
         final EditText input=new EditText(getActivity());
@@ -114,7 +107,7 @@ public class HomeFragment extends Fragment implements HomeView {
     }
 
     @Override
-    public void displayContextDialog(final ShoppingList shoppingList) {
+    public void displayContextView(final ShoppingList shoppingList) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(shoppingList.getListName())
                 .setItems(R.array.context_shopping_list, new DialogInterface.OnClickListener() {
@@ -135,7 +128,7 @@ public class HomeFragment extends Fragment implements HomeView {
     }
 
     @Override
-    public void displayNewListDialog() {
+    public void displayNewListView() {
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.name_shopping_list));
         final EditText input=new EditText(getActivity());
@@ -184,7 +177,6 @@ public class HomeFragment extends Fragment implements HomeView {
 
         @Override
         public void onClick(View v) {
-            mTransitionView = mTextView;
             mPresenter.onListClicked(mShoppingList);
         }
 

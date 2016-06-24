@@ -2,6 +2,7 @@ package uk.co.domcampbell.shoppinglist;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
@@ -36,7 +37,7 @@ public class HomePresenter {
     }
 
     public void onListRenameClicked(ShoppingList shoppingList) {
-        mHomeView.displayRenameDialog(shoppingList);
+        mHomeView.displayRenameView(shoppingList);
     }
 
     public void renameList(ShoppingList shoppingList, String newName) {
@@ -47,11 +48,11 @@ public class HomePresenter {
     }
 
     public void onListLongClicked(ShoppingList shoppingList) {
-        mHomeView.displayContextDialog(shoppingList);
+        mHomeView.displayContextView(shoppingList);
     }
 
     public void onCreateNewListClicked() {
-        mHomeView.displayNewListDialog();
+        mHomeView.displayNewListView();
     }
 
     public void createNewList(String newName) {
@@ -71,6 +72,20 @@ public class HomePresenter {
     }
 
     public List<ShoppingList> getShoppingLists() {
+        for (final ShoppingList shoppingList:mShoppingLists){
+            mListService.fetchListName(shoppingList, new ListService.NameCallback() {
+                @Override
+                public void onNameReceived(String name) {
+                    if (!shoppingList.getListName().equals(name)){
+                        shoppingList.setListName(name);
+                        mListDatabase.updateList(shoppingList);
+                        mHomeView.notifyListChanged(shoppingList);
+                    }
+                }
+            });
+        }
+
         return mShoppingLists;
     }
+
 }

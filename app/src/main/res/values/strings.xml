@@ -6,6 +6,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="transition_list_title">transition_list_title</string>
+    <string name="share">share</string>
+    <string name="share_message">"I'm inviting you to share my shopping list, just click here: "</string>
     <string-array name="context_shopping_list">
         <item>Rename</item>
         <item>Delete</item>

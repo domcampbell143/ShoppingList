@@ -1,7 +1,8 @@
-package uk.co.domcampbell.shoppinglist;
+package uk.co.domcampbell.shoppinglist.dagger;
 
 import dagger.Module;
 import dagger.Provides;
+import uk.co.domcampbell.shoppinglist.HomePresenter;
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 

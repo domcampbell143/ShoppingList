@@ -1,4 +1,4 @@
-package uk.co.domcampbell.shoppinglist;
+package uk.co.domcampbell.shoppinglist.dagger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

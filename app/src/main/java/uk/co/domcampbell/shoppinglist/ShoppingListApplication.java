@@ -6,15 +6,24 @@ import com.firebase.client.Firebase;
 
 import java.util.UUID;
 
-import uk.co.domcampbell.shoppinglist.database.DbModule;
-import uk.co.domcampbell.shoppinglist.network.NetworkModule;
+import uk.co.domcampbell.shoppinglist.dagger.DaggerApplicationComponent;
+import uk.co.domcampbell.shoppinglist.dagger.DaggerHomePresenterComponent;
+import uk.co.domcampbell.shoppinglist.dagger.DaggerListPresenterComponent;
+import uk.co.domcampbell.shoppinglist.dagger.HomePresenterComponent;
+import uk.co.domcampbell.shoppinglist.dagger.DbModule;
+import uk.co.domcampbell.shoppinglist.dagger.HomePresenterModule;
+import uk.co.domcampbell.shoppinglist.dagger.ListPresenterComponent;
+import uk.co.domcampbell.shoppinglist.dagger.ListPresenterModule;
+import uk.co.domcampbell.shoppinglist.dagger.ApplicationComponent;
+import uk.co.domcampbell.shoppinglist.dagger.NetworkModule;
+import uk.co.domcampbell.shoppinglist.dagger.UserModule;
 
 /**
  * Created by Dominic on 20/06/16.
  */
 public class ShoppingListApplication extends Application {
 
-    private MyComponent mComponent;
+    private ApplicationComponent mComponent;
     private ListPresenterComponent mListPresenterComponent;
 
     @Override
@@ -22,22 +31,25 @@ public class ShoppingListApplication extends Application {
         super.onCreate();
         Firebase.setAndroidContext(this);
 
-        mComponent = DaggerMyComponent.builder()
+        mComponent = DaggerApplicationComponent.builder()
+                .userModule(new UserModule(this))
                 .dbModule(new DbModule(this))
                 .networkModule(new NetworkModule())
                 .build();
     }
 
+    public ApplicationComponent getApplicationComponent(){return mComponent;}
+
     public ListPresenterComponent getListPresenterComponent(UUID uuid){
         return DaggerListPresenterComponent.builder()
-                .myComponent(mComponent)
+                .applicationComponent(mComponent)
                 .listPresenterModule(new ListPresenterModule(uuid))
                 .build();
     }
 
     public HomePresenterComponent getHomePresenterComponent(){
         return DaggerHomePresenterComponent.builder()
-                .myComponent(mComponent)
+                .applicationComponent(mComponent)
                 .homePresenterModule(new HomePresenterModule())
                 .build();
     }

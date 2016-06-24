@@ -1,4 +1,4 @@
-package uk.co.domcampbell.shoppinglist;
+package uk.co.domcampbell.shoppinglist.dagger;
 
 import java.util.UUID;
 
@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import uk.co.domcampbell.shoppinglist.ListPresenter;
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 
@@ -15,14 +16,14 @@ import uk.co.domcampbell.shoppinglist.network.ListService;
 @Module
 public class ListPresenterModule {
 
-    UUID mUUID;
+    UUID mListUuid;
 
     public ListPresenterModule(UUID uuid){
-        mUUID= uuid;
+        mListUuid= uuid;
     }
 
     @Provides
     ListPresenter providesListPresenter(ListDatabase listDatabase, ListService listService){
-        return new ListPresenter(listDatabase, listService, mUUID);
+        return new ListPresenter(listDatabase, listService, mListUuid);
     }
 }

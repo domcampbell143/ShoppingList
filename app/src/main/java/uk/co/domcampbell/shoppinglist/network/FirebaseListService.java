@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
+import uk.co.domcampbell.shoppinglist.user.User;
 
 /**
  * Created by Dominic on 20/06/16.
@@ -26,14 +27,22 @@ public class FirebaseListService implements ListService {
     private static final String TAG="FirebaseListService";
 
     Firebase mBaseRef;
+    String mUserUuidString;
 
-    public FirebaseListService(){
+    public FirebaseListService(User user){
+        mUserUuidString = user.getId().toString();
         mBaseRef = new Firebase("https://dcshoppinglist.firebaseio.com/shoppinglist");
     }
 
     @Override
     public void addList(ShoppingList shoppingList) {
         mBaseRef.child(shoppingList.getUUID().toString()+"/name").setValue(shoppingList.getListName());
+        addUserToNetworkList(shoppingList);
+    }
+
+    @Override
+    public void addUserToNetworkList(ShoppingList shoppingList) {
+        mBaseRef.child(shoppingList.getUUID().toString()+"/users/"+mUserUuidString).setValue(true);
     }
 
     @Override
@@ -42,8 +51,26 @@ public class FirebaseListService implements ListService {
     }
 
     @Override
-    public void deleteShoppingList(ShoppingList shoppingList) {
-        mBaseRef.child(shoppingList.getUUID().toString()).removeValue();
+    public void deleteShoppingList(final ShoppingList shoppingList) {
+        final Firebase usersRef = mBaseRef.child(shoppingList.getUUID().toString()+"/users");
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount()==1 && dataSnapshot.child(mUserUuidString).exists()){
+                    //current user is the only one, free to delete
+                    mBaseRef.child(shoppingList.getUUID().toString()).removeValue();
+                } else {
+                    //just delete this user from the users list (if it exists)
+                    usersRef.child(mUserUuidString).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "deleteShoppingList cancelled: "+firebaseError.getMessage());
+            }
+        });
+
     }
 
     @Override
@@ -70,8 +97,27 @@ public class FirebaseListService implements ListService {
     }
 
     @Override
-    public void fetchList(ShoppingList shoppingList,final Callback callback) {
+    public void fetchListItems(final ShoppingList shoppingList, final ItemCallback callback) {
         Firebase listRef = mBaseRef.child(shoppingList.getUUID().toString()+"/list");
+        listRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<ListItem> netListItems = new ArrayList<ListItem>();
+                for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    netListItems.add(listItemfromSnapshot(snapshot));
+                }
+                List<ListItem>localListItems = new ArrayList<ListItem>(shoppingList.getList());
+                localListItems.removeAll(netListItems);
+                for (ListItem item:localListItems){
+                    callback.onItemRemoved(item);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "fetchListItems cancelled: "+firebaseError.getMessage());
+            }
+        });
         listRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -95,7 +141,23 @@ public class FirebaseListService implements ListService {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "fetchList cancelled: "+firebaseError.getMessage());
+                Log.d(TAG, "fetchListItems cancelled: "+firebaseError.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void fetchListName(ShoppingList shoppingList, final NameCallback callback) {
+        Firebase nameRef = mBaseRef.child(shoppingList.getUUID().toString()+"/name");
+        nameRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                callback.onNameReceived(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "fetchListName cancelled: "+firebaseError.getMessage());
             }
         });
     }

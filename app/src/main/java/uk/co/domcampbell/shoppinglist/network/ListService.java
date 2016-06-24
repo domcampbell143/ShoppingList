@@ -1,8 +1,6 @@
 package uk.co.domcampbell.shoppinglist.network;
 
 
-import java.util.List;
-
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
 
@@ -13,6 +11,8 @@ public interface ListService {
 
     void addList(ShoppingList shoppingList);
 
+    void addUserToNetworkList(ShoppingList shoppingList);
+
     void updateListName(ShoppingList shoppingList);
 
     void addItemToList(ListItem item,ShoppingList shoppingList);
@@ -21,11 +21,17 @@ public interface ListService {
 
     void updateItemInList(ListItem item,ShoppingList shoppingList);
 
-    void fetchList(ShoppingList shoppingList,Callback callback);
-
     void deleteShoppingList(ShoppingList shoppingList);
 
-    public interface Callback {
+    void fetchListName(ShoppingList shoppingList, NameCallback callback);
+
+    interface NameCallback{
+        void onNameReceived(String name);
+    }
+
+    void fetchListItems(ShoppingList shoppingList, ItemCallback callback);
+
+    interface ItemCallback {
         void onItemAdded(ListItem item);
         void onItemChanged(ListItem item);
         void onItemRemoved(ListItem item);

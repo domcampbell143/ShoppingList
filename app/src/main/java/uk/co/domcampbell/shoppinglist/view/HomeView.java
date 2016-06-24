@@ -8,13 +8,13 @@ import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
 public interface HomeView {
     void launchListActivity(ShoppingList shoppingList);
 
-    void displayRenameDialog(ShoppingList shoppingList);
+    void displayRenameView(ShoppingList shoppingList);
 
     void notifyListChanged(ShoppingList shoppingList);
 
-    void displayContextDialog(ShoppingList shoppingList);
+    void displayContextView(ShoppingList shoppingList);
 
-    void displayNewListDialog();
+    void displayNewListView();
 
     void notifyListAdded(ShoppingList a);
 
