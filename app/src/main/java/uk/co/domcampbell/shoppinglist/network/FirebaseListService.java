@@ -26,8 +26,8 @@ public class FirebaseListService implements ListService {
 
     private static final String TAG="FirebaseListService";
 
-    Firebase mBaseRef;
-    String mUserUuidString;
+    private Firebase mBaseRef;
+    private String mUserUuidString;
 
     public FirebaseListService(User user){
         mUserUuidString = user.getId().toString();
@@ -102,41 +102,11 @@ public class FirebaseListService implements ListService {
         listRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<ListItem> netListItems = new ArrayList<ListItem>();
+                List<ListItem> listItems = new ArrayList<ListItem>();
                 for (DataSnapshot snapshot:dataSnapshot.getChildren()){
-                    netListItems.add(listItemfromSnapshot(snapshot));
+                    listItems.add(listItemfromSnapshot(snapshot));
                 }
-                List<ListItem>localListItems = new ArrayList<ListItem>(shoppingList.getList());
-                localListItems.removeAll(netListItems);
-                for (ListItem item:localListItems){
-                    callback.onItemRemoved(item);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "fetchListItems cancelled: "+firebaseError.getMessage());
-            }
-        });
-        listRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                callback.onItemAdded(listItemfromSnapshot(dataSnapshot));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                callback.onItemChanged(listItemfromSnapshot(dataSnapshot));
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                callback.onItemRemoved(listItemfromSnapshot(dataSnapshot));
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                callback.onListItemsReceived(listItems);
             }
 
             @Override
@@ -149,7 +119,7 @@ public class FirebaseListService implements ListService {
     @Override
     public void fetchListName(ShoppingList shoppingList, final NameCallback callback) {
         Firebase nameRef = mBaseRef.child(shoppingList.getUUID().toString()+"/name");
-        nameRef.addValueEventListener(new ValueEventListener() {
+        nameRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 callback.onNameReceived(dataSnapshot.getValue(String.class));

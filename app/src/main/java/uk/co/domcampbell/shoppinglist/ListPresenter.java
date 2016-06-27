@@ -1,6 +1,10 @@
 package uk.co.domcampbell.shoppinglist;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
@@ -82,42 +86,44 @@ public class ListPresenter {
 
 
     public ShoppingList fetchList() {
+        for (ListItem item : mShoppingList.getList()){
+            Log.d(TAG, "ListItem: "+item.getUUID().toString());
+        }
         mListService.fetchListItems(mShoppingList, new ListService.ItemCallback() {
             @Override
-            public void onItemAdded(ListItem item) {
-                if (mShoppingList.getList().contains(item)){
-                    onItemChanged(item);
-                } else {
-                    mShoppingList.addItem(item);
-                    mListDatabase.addItemToList(item, mShoppingList);
-                    mView.notifyItemAdded(item);
-                }
-            }
-
-            @Override
-            public void onItemChanged(ListItem item) {
-                int index = mShoppingList.getList().indexOf(item);
-                ListItem localItem = mShoppingList.getList().get(index);
-
-                if (localItem.isCompleted() != item.isCompleted() || (localItem.getCompletedDate()==null?item.getCompletedDate()!=null:!localItem.getCompletedDate().equals(item.getCompletedDate()))){
-                    localItem.setCompleted(item.isCompleted());
-                    localItem.setCompletedDate(item.getCompletedDate());
-
-                    mShoppingList.sortList();
-                    mListDatabase.updateItem(item);
-                    int to = mShoppingList.getList().indexOf(item);
-                    mView.notifyItemMoved(index, to);
-                    mView.notifyItemChanged(item);
-                }
-            }
-
-            @Override
-            public void onItemRemoved(ListItem item) {
-                if (mShoppingList.getList().contains(item)) {
+            public void onListItemsReceived(List<ListItem> items) {
+                //Removals
+                List<ListItem> copiedList = new ArrayList<ListItem>(mShoppingList.getList());
+                copiedList.removeAll(items);
+                for (ListItem item:copiedList){
                     int index = mShoppingList.getList().indexOf(item);
                     mShoppingList.removeItem(item);
                     mListDatabase.removeItem(item);
                     mView.notifyItemRemoved(index);
+                }
+
+                for (ListItem item:items){
+                    //Changes
+                    if (mShoppingList.getList().contains(item)){
+                        int index = mShoppingList.getList().indexOf(item);
+                        ListItem localItem = mShoppingList.getList().get(index);
+
+                        if (localItem.isCompleted() != item.isCompleted() || (localItem.getCompletedDate()==null?item.getCompletedDate()!=null:!localItem.getCompletedDate().equals(item.getCompletedDate()))){
+                            localItem.setCompleted(item.isCompleted());
+                            localItem.setCompletedDate(item.getCompletedDate());
+
+                            mShoppingList.sortList();
+                            mListDatabase.updateItem(item);
+                            int to = mShoppingList.getList().indexOf(item);
+                            mView.notifyItemMoved(index, to);
+                            mView.notifyItemChanged(item);
+                        }
+                    } else {
+                        //Adds
+                        mShoppingList.addItem(item);
+                        mListDatabase.addItemToList(item, mShoppingList);
+                        mView.notifyItemAdded(item);
+                    }
                 }
             }
         });

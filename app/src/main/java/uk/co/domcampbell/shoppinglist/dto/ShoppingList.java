@@ -40,10 +40,6 @@ public class ShoppingList {
         return mList;
     }
 
-    public void setList(List<ListItem> list) {
-        mList = list;
-    }
-
     public void addItem(ListItem item) {
         mList.add(item);
     }
