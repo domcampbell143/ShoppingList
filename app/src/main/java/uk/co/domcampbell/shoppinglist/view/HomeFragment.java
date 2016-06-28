@@ -32,7 +32,7 @@ import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
  */
 public class HomeFragment extends Fragment implements HomeView {
 
-    @Inject HomePresenter mPresenter;
+    private HomePresenter mPresenter;
     private List<ShoppingList> mShoppingLists;
     private RecyclerView mRecyclerView;
     private FloatingActionButton mFloatingActionButton;
@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ((ShoppingListApplication)getActivity().getApplication()).getHomePresenterComponent().inject(this);
+        mPresenter = ((ShoppingListApplication)getActivity().getApplication()).getHomePresenterComponent().homePresenter();
         mPresenter.setView(this);
         mShoppingLists = mPresenter.getShoppingLists();
     }

@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,8 +26,6 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.UUID;
-
-import javax.inject.Inject;
 
 import uk.co.domcampbell.shoppinglist.ListActivity;
 import uk.co.domcampbell.shoppinglist.ListPresenter;
@@ -53,8 +50,7 @@ public class ListFragment extends Fragment implements ListView {
     private ImageButton mCancelAddButton;
 
     private ShoppingList mShoppingList;
-    @Inject
-    ListPresenter mPresenter;
+    private ListPresenter mPresenter;
 
     public static ListFragment newInstance(UUID uuid){
         Bundle args = new Bundle();
@@ -69,7 +65,7 @@ public class ListFragment extends Fragment implements ListView {
         super.onCreate(savedInstanceState);
         UUID uuid = (UUID) getArguments().getSerializable(ARG_UUID);
 
-        ((ShoppingListApplication) getActivity().getApplication()).getListPresenterComponent(uuid).inject(this);
+        mPresenter = ((ShoppingListApplication) getActivity().getApplication()).getListPresenterComponent(uuid).listPresenter();
         mPresenter.setView(this);
         mShoppingList = mPresenter.fetchList();
         getActivity().setTitle(mShoppingList.getListName());

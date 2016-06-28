@@ -22,7 +22,7 @@ public class ListPresenterModule {
         mListUuid= uuid;
     }
 
-    @Provides
+    @Provides @ActivityScope
     ListPresenter providesListPresenter(ListDatabase listDatabase, ListService listService){
         return new ListPresenter(listDatabase, listService, mListUuid);
     }

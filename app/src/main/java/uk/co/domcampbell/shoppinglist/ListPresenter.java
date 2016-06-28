@@ -31,6 +31,7 @@ public class ListPresenter {
         mListDatabase = listDatabase;
         mListService = listService;
         mShoppingList = mListDatabase.getShoppingList(uuid);
+        mShoppingList.sortList();
     }
 
     public void setView(ListView listView){

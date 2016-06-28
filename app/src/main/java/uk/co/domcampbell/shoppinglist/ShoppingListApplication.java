@@ -11,7 +11,6 @@ import uk.co.domcampbell.shoppinglist.dagger.DaggerHomePresenterComponent;
 import uk.co.domcampbell.shoppinglist.dagger.DaggerListPresenterComponent;
 import uk.co.domcampbell.shoppinglist.dagger.HomePresenterComponent;
 import uk.co.domcampbell.shoppinglist.dagger.DbModule;
-import uk.co.domcampbell.shoppinglist.dagger.HomePresenterModule;
 import uk.co.domcampbell.shoppinglist.dagger.ListPresenterComponent;
 import uk.co.domcampbell.shoppinglist.dagger.ListPresenterModule;
 import uk.co.domcampbell.shoppinglist.dagger.ApplicationComponent;
@@ -50,7 +49,6 @@ public class ShoppingListApplication extends Application {
     public HomePresenterComponent getHomePresenterComponent(){
         return DaggerHomePresenterComponent.builder()
                 .applicationComponent(mComponent)
-                .homePresenterModule(new HomePresenterModule())
                 .build();
     }
 }

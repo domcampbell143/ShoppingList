@@ -1,6 +1,7 @@
 package uk.co.domcampbell.shoppinglist.dagger;
 
 import dagger.Component;
+import uk.co.domcampbell.shoppinglist.ListPresenter;
 import uk.co.domcampbell.shoppinglist.view.ListFragment;
 
 /**
@@ -9,5 +10,5 @@ import uk.co.domcampbell.shoppinglist.view.ListFragment;
 @ActivityScope
 @Component(dependencies = {ApplicationComponent.class}, modules = {ListPresenterModule.class})
 public interface ListPresenterComponent {
-    void inject(ListFragment listFragment);
+    ListPresenter listPresenter();
 }

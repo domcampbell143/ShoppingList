@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
+import uk.co.domcampbell.shoppinglist.dagger.ActivityScope;
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
@@ -13,6 +16,7 @@ import uk.co.domcampbell.shoppinglist.view.HomeView;
 /**
  * Created by Dominic on 23/06/16.
  */
+@ActivityScope
 public class HomePresenter {
     
     private ListDatabase mListDatabase;
@@ -20,7 +24,8 @@ public class HomePresenter {
     private HomeView mHomeView;
 
     private List<ShoppingList> mShoppingLists;
-    
+
+    @Inject
     public HomePresenter(ListDatabase db, ListService service){
         mListDatabase= db;
         mListService=service;
