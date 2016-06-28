@@ -23,7 +23,6 @@ import uk.co.domcampbell.shoppinglist.dagger.UserModule;
 public class ShoppingListApplication extends Application {
 
     private ApplicationComponent mComponent;
-    private ListPresenterComponent mListPresenterComponent;
 
     @Override
     public void onCreate() {
