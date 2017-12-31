@@ -27,6 +27,8 @@ public interface ListService {
 
     void fetchListName(ShoppingList shoppingList, NameCallback callback);
 
+    void onNetworkConnectivityChange(boolean isConnected);
+
     interface NameCallback{
         void onNameReceived(String name);
     }

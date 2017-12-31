@@ -6,6 +6,7 @@ import dagger.Component;
 import uk.co.domcampbell.shoppinglist.ListActivity;
 import uk.co.domcampbell.shoppinglist.dagger.DbModule;
 import uk.co.domcampbell.shoppinglist.database.ListDatabase;
+import uk.co.domcampbell.shoppinglist.network.ConnectivityBroadcastReceiver;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 import uk.co.domcampbell.shoppinglist.dagger.NetworkModule;
 import uk.co.domcampbell.shoppinglist.user.User;
@@ -20,6 +21,7 @@ public interface ApplicationComponent {
 
     ListDatabase listDatabase();
     ListService listService();
+    ConnectivityBroadcastReceiver connectivityBroadcastReceiver();
 
     void inject(ListActivity listActivity);
 }

@@ -1,6 +1,9 @@
 package uk.co.domcampbell.shoppinglist;
 
 import android.app.Application;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.firebase.client.Firebase;
 
@@ -32,8 +35,10 @@ public class ShoppingListApplication extends Application {
         mComponent = DaggerApplicationComponent.builder()
                 .userModule(new UserModule(this))
                 .dbModule(new DbModule(this))
-                .networkModule(new NetworkModule())
+                .networkModule(new NetworkModule(this))
                 .build();
+
+        registerReceiver(mComponent.connectivityBroadcastReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     public ApplicationComponent getApplicationComponent(){return mComponent;}
