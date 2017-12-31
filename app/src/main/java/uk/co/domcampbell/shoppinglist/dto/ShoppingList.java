@@ -54,7 +54,7 @@ public class ShoppingList {
     }
 
     public void addItem(ListItem item) {
-        mList.add(item);
+        mList.add(0, item);
     }
 
     public void removeItem(ListItem item) { mList.remove(item);

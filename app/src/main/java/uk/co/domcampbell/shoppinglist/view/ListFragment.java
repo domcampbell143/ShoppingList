@@ -152,22 +152,26 @@ public class ListFragment extends Fragment implements ListView {
 
     @Override
     public void notifyItemRemoved(int index) {
-        mAdapter.notifyItemRemoved(index);
+        // adjusts for add new button at 0
+        mAdapter.notifyItemRemoved(index + 1);
     }
 
     @Override
     public void notifyItemChanged(ListItem item) {
-        mAdapter.notifyItemChanged(mShoppingList.getList().indexOf(item));
+        // adjusts for add new button at 0
+        mAdapter.notifyItemChanged(mShoppingList.getList().indexOf(item) + 1);
     }
 
     @Override
     public void notifyItemAdded(ListItem item) {
-        mAdapter.notifyItemInserted(mShoppingList.getList().indexOf(item));
+        // adjusts for add new button at 0
+        mAdapter.notifyItemInserted(mShoppingList.getList().indexOf(item) + 1);
     }
 
     @Override
     public void notifyItemMoved(Integer from, Integer to) {
-        mAdapter.notifyItemMoved(from,to);
+        // adjusts for add new button at 0
+        mAdapter.notifyItemMoved(from + 1,to + 1);
     }
 
     @Override
@@ -270,7 +274,7 @@ public class ListFragment extends Fragment implements ListView {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == mShoppingList.getList().size()){
+            if (position == 0){
                 return ADD_NEW_BUTTON;
             } else {
                 return LIST_ITEM;
@@ -292,7 +296,8 @@ public class ListFragment extends Fragment implements ListView {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof ListItemHolder) {
 
-                ListItem item = mShoppingList.getList().get(position);
+                // adjusts for add new button at 0
+                ListItem item = mShoppingList.getList().get(position - 1);
                 ((ListItemHolder)holder).bindListItem(item);
             }
         }
