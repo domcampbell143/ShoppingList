@@ -1,7 +1,6 @@
 package uk.co.domcampbell.shoppinglist;
 
 import android.app.Application;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 
@@ -38,7 +37,7 @@ public class ShoppingListApplication extends Application {
                 .networkModule(new NetworkModule(this))
                 .build();
 
-        registerReceiver(mComponent.connectivityBroadcastReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        registerReceiver(mComponent.broadcastReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     public ApplicationComponent getApplicationComponent(){return mComponent;}

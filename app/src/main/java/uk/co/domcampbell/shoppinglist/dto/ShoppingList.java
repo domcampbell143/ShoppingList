@@ -14,6 +14,11 @@ public class ShoppingList {
     private List<ListItem> mList;
     private UUID mUUID;
 
+    /***
+     * No arg constructor for jackson
+     */
+    public ShoppingList(){}
+
     public ShoppingList(UUID uuid, String listName, List<ListItem> list){
         mUUID = uuid;
         mListName = listName;
@@ -28,6 +33,10 @@ public class ShoppingList {
         return mUUID;
     }
 
+    public void setUUID(UUID UUID) {
+        mUUID = UUID;
+    }
+
     public String getListName() {
         return mListName;
     }
@@ -38,6 +47,10 @@ public class ShoppingList {
 
     public List<ListItem> getList() {
         return mList;
+    }
+
+    public void setList(List<ListItem> list) {
+        mList = list;
     }
 
     public void addItem(ListItem item) {

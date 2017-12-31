@@ -17,17 +17,15 @@ public interface ListService {
 
     void updateListName(ShoppingList shoppingList);
 
+    void deleteShoppingList(ShoppingList shoppingList);
+
     void addItemToList(ListItem item,ShoppingList shoppingList);
 
     void removeItemFromList(ListItem item,ShoppingList shoppingList);
 
     void updateItemInList(ListItem item,ShoppingList shoppingList);
 
-    void deleteShoppingList(ShoppingList shoppingList);
-
     void fetchListName(ShoppingList shoppingList, NameCallback callback);
-
-    void onNetworkConnectivityChange(boolean isConnected);
 
     interface NameCallback{
         void onNameReceived(String name);

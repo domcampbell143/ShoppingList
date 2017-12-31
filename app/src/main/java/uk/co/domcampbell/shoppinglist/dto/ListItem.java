@@ -8,11 +8,17 @@ import java.util.UUID;
  */
 public class ListItem {
 
+
     private UUID mUUID;
     private String mItemName;
     private boolean completed;
     private Date mCreatedDate;
     private Date mCompletedDate;
+
+    /***
+     * No arg constructor for jackson
+     */
+    public ListItem(){}
 
     public ListItem(String itemName, boolean completed, Date createdDate, Date completedDate) {
         this(UUID.randomUUID(), itemName, completed, createdDate, completedDate);
@@ -29,6 +35,10 @@ public class ListItem {
 
     public UUID getUUID() {
         return mUUID;
+    }
+
+    public void setUUID(UUID UUID) {
+        mUUID = UUID;
     }
 
     public String getItemName() {
