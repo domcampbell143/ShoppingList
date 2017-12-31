@@ -51,6 +51,7 @@ public class ListPresenterTest {
         mListPresenter = new ListPresenter(mListDatabase, mListService, new UUID(0,0));
         mListPresenter.setView(mView);
 
+        Mockito.reset(mShoppingList);
     }
 
     @Test
