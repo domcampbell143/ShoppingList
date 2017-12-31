@@ -32,12 +32,16 @@ public class ListPresenter {
         mListService = listService;
         mShoppingList = mListDatabase.getShoppingList(uuid);
         mShoppingList.sortList();
+        updateFromRemoteList();
     }
 
     public void setView(ListView listView){
         mView= listView;
     }
 
+    public ShoppingList getList(){
+        return mShoppingList;
+    }
 
     public void createNewItemClicked(String itemName) {
         if (!addEditTextVisible) {
@@ -86,10 +90,7 @@ public class ListPresenter {
     }
 
 
-    public ShoppingList fetchList() {
-        for (ListItem item : mShoppingList.getList()){
-            Log.d(TAG, "ListItem: "+item.getUUID().toString());
-        }
+    public void updateFromRemoteList() {
         mListService.fetchListItems(mShoppingList, new ListService.ItemCallback() {
             @Override
             public void onListItemsReceived(List<ListItem> items) {
@@ -100,7 +101,9 @@ public class ListPresenter {
                     int index = mShoppingList.getList().indexOf(item);
                     mShoppingList.removeItem(item);
                     mListDatabase.removeItem(item);
-                    mView.notifyItemRemoved(index);
+                    if (mView != null) {
+                        mView.notifyItemRemoved(index);
+                    }
                 }
 
                 for (ListItem item:items){
@@ -116,19 +119,23 @@ public class ListPresenter {
                             mShoppingList.sortList();
                             mListDatabase.updateItem(item);
                             int to = mShoppingList.getList().indexOf(item);
-                            mView.notifyItemMoved(index, to);
-                            mView.notifyItemChanged(item);
+                            if (mView != null) {
+                                mView.notifyItemMoved(index, to);
+                                mView.notifyItemChanged(item);
+                            }
                         }
                     } else {
                         //Adds
                         mShoppingList.addItem(item);
                         mListDatabase.addItemToList(item, mShoppingList);
-                        mView.notifyItemAdded(item);
+                        mShoppingList.sortList();
+                        if (mView != null) {
+                            mView.notifyItemAdded(item);
+                        }
                     }
                 }
             }
         });
-        return mShoppingList;
     }
 
     public void onItemLongClicked(ListItem listItem) {

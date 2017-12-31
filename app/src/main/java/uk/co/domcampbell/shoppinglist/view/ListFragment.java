@@ -67,7 +67,7 @@ public class ListFragment extends Fragment implements ListView {
 
         mPresenter = ((ShoppingListApplication) getActivity().getApplication()).getListPresenterComponent(uuid).listPresenter();
         mPresenter.setView(this);
-        mShoppingList = mPresenter.fetchList();
+        mShoppingList = mPresenter.getList();
         getActivity().setTitle(mShoppingList.getListName());
         setHasOptionsMenu(true);
     }
