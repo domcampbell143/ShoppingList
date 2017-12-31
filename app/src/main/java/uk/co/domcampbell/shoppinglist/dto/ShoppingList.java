@@ -69,15 +69,15 @@ public class ShoppingList {
         public int compare(ListItem lhs, ListItem rhs) {
             if (lhs.isCompleted()){
                 if (rhs.isCompleted()){
-                    return lhs.getCompletedDate().compareTo(rhs.getCompletedDate());
+                    return rhs.getCompletedDate().compareTo(lhs.getCompletedDate());
                 } else {
-                    return -1;
+                    return 1;
                 }
             } else {
                 if (rhs.isCompleted()){
-                    return 1;
+                    return -1;
                 } else {
-                    return lhs.getCreatedDate().compareTo(rhs.getCreatedDate());
+                    return rhs.getCreatedDate().compareTo(lhs.getCreatedDate());
                 }
             }
         }
