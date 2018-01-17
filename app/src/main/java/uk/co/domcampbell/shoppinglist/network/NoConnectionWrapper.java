@@ -1,7 +1,6 @@
 package uk.co.domcampbell.shoppinglist.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Queue;
 
 import uk.co.domcampbell.shoppinglist.dto.ListItem;
 import uk.co.domcampbell.shoppinglist.dto.ShoppingList;
@@ -19,6 +19,7 @@ import uk.co.domcampbell.shoppinglist.network.method.AddListMethod;
 import uk.co.domcampbell.shoppinglist.network.method.AddUserToListMethod;
 import uk.co.domcampbell.shoppinglist.network.method.DeleteListMethod;
 import uk.co.domcampbell.shoppinglist.network.method.NetworkMethod;
+import uk.co.domcampbell.shoppinglist.network.method.NetworkMethodQueue;
 import uk.co.domcampbell.shoppinglist.network.method.RemoveItemFromListMethod;
 import uk.co.domcampbell.shoppinglist.network.method.UpdateItemInListMethod;
 import uk.co.domcampbell.shoppinglist.network.method.UpdateListNameMethod;
@@ -31,19 +32,19 @@ public class NoConnectionWrapper implements ListService {
 
     private static final String TAG="NoConnectionWrapper";
 
-    private static final String PREFS_NAME = "NoConnectionWrapper";
-    private static final String PREFS_NO_ENTRIES = "number_entries";
-    private static final String PREFS_KEYS = "key_";
+
 
     private Context mContext;
     private boolean isConnected;
     private ListService mWrappedListService;
+    private NetworkMethodQueue mQueue;
 
     private ObjectMapper mObjectMapper;
 
-    public NoConnectionWrapper(Context context, ListService listService){
+    public NoConnectionWrapper(Context context, ListService listService, NetworkMethodQueue queue){
         mContext = context;
         mWrappedListService = listService;
+        mQueue = queue;
         mObjectMapper = new ObjectMapper();
 
         ConnectivityManager connectivityManager
@@ -166,25 +167,16 @@ public class NoConnectionWrapper implements ListService {
         try{
             String method = mObjectMapper.writeValueAsString(networkMethod);
             Log.d(TAG, "Queueing " + method);
-
-            SharedPreferences preferences = mContext.getSharedPreferences(PREFS_NAME, 0);
-            int noOfEntries = preferences.getInt(PREFS_NO_ENTRIES, 0);
-
-            preferences.edit()
-                    .putString(PREFS_KEYS + noOfEntries, method)
-                    .putInt(PREFS_NO_ENTRIES, ++noOfEntries)
-                    .apply();
+            mQueue.queueSerializedMethod(method);
         } catch (JsonProcessingException e) {
             Log.e(TAG, "Failed to write object to json", e);
         }
     }
 
     private void executeNetworkMethods(){
-        SharedPreferences preferences = mContext.getSharedPreferences(PREFS_NAME, 0);
-        int noOfEntries = preferences.getInt(PREFS_NO_ENTRIES, 0);
-
-        for (int i=0;i<noOfEntries;i++){
-            String jsonMethod = preferences.getString(PREFS_KEYS + i, "");
+        Queue<String> queue = mQueue.getQueuedMethods();
+        while (!queue.isEmpty()){
+            String jsonMethod = queue.remove();
             Log.d(TAG, jsonMethod);
             try {
                 NetworkMethod networkMethod = mObjectMapper.readValue(jsonMethod, NetworkMethod.class);
@@ -193,7 +185,5 @@ public class NoConnectionWrapper implements ListService {
                 Log.e(TAG, "Failed to convert the following json into NetworkMethod: " + jsonMethod, e);
             }
         }
-
-        preferences.edit().clear().apply();
     }
 }

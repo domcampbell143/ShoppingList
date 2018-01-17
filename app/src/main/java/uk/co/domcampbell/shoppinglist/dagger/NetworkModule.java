@@ -11,6 +11,7 @@ import uk.co.domcampbell.shoppinglist.network.ConnectivityBroadcastReceiver;
 import uk.co.domcampbell.shoppinglist.network.FirebaseListService;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 import uk.co.domcampbell.shoppinglist.network.NoConnectionWrapper;
+import uk.co.domcampbell.shoppinglist.network.method.SharedPrefsNetworkMethodQueue;
 import uk.co.domcampbell.shoppinglist.user.User;
 
 /**
@@ -29,7 +30,7 @@ public class NetworkModule {
     @Provides
     @Singleton
     NoConnectionWrapper providesNoConnectionWrapper(User user){
-        return new NoConnectionWrapper(mContext, new FirebaseListService(user));
+        return new NoConnectionWrapper(mContext, new FirebaseListService(user), new SharedPrefsNetworkMethodQueue(mContext));
     }
 
     @Provides
