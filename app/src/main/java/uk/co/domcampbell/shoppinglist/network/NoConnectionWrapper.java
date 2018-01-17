@@ -143,8 +143,13 @@ public class NoConnectionWrapper implements ListService {
     private void executeNetworkMethods(){
         Queue<NetworkMethod> queue = mQueue.getQueuedMethods();
         while (!queue.isEmpty()){
-            NetworkMethod networkMethod = queue.remove();
-            networkMethod.executeWith(mWrappedListService);
+            try {
+                NetworkMethod networkMethod = queue.remove();
+                networkMethod.validate();
+                networkMethod.executeWith(mWrappedListService);
+            } catch (NetworkMethod.InvalidNetworkMethodException e) {
+                Log.e(TAG, "Unable to execute network method.", e);
+            }
         }
     }
 }

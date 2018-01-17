@@ -52,6 +52,7 @@ public class ListPresenterTest {
         mListPresenter.setView(mView);
 
         Mockito.reset(mShoppingList);
+        Mockito.reset(mListService);
     }
 
     @Test
@@ -140,14 +141,13 @@ public class ListPresenterTest {
     }
 
     @Test
-    public void whenFetchListCalled() {
+    public void whenUpdateFromRemoteListCalled() {
         //given
 
         //when
-        ShoppingList shoppingList = mListPresenter.fetchList();
+        mListPresenter.updateFromRemoteList();
         //then
         Mockito.verify(mListService).fetchListItems(Matchers.eq(mShoppingList),Matchers.isA(ListService.ItemCallback.class));
-        assertNotNull(shoppingList);
     }
 
 }
