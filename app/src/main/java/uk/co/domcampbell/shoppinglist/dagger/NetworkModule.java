@@ -30,7 +30,7 @@ public class NetworkModule {
     @Provides
     @Singleton
     NoConnectionWrapper providesNoConnectionWrapper(User user){
-        return new NoConnectionWrapper(mContext, new FirebaseListService(user), new SharedPrefsNetworkMethodQueue(mContext));
+        return new NoConnectionWrapper(new FirebaseListService(user), new SharedPrefsNetworkMethodQueue(mContext));
     }
 
     @Provides

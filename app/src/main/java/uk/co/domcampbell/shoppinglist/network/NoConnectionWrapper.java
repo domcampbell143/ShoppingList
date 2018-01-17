@@ -1,8 +1,5 @@
 package uk.co.domcampbell.shoppinglist.network;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,30 +29,16 @@ public class NoConnectionWrapper implements ListService {
 
     private static final String TAG="NoConnectionWrapper";
 
-
-
-    private Context mContext;
     private boolean isConnected;
     private ListService mWrappedListService;
     private NetworkMethodQueue mQueue;
 
     private ObjectMapper mObjectMapper;
 
-    public NoConnectionWrapper(Context context, ListService listService, NetworkMethodQueue queue){
-        mContext = context;
+    public NoConnectionWrapper(ListService listService, NetworkMethodQueue queue){
         mWrappedListService = listService;
         mQueue = queue;
         mObjectMapper = new ObjectMapper();
-
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
-            isConnected = true;
-            executeNetworkMethods();
-        } else {
-            isConnected = false;
-        }
     }
 
     @Override
