@@ -1,14 +1,11 @@
 package uk.co.domcampbell.shoppinglist.network;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,7 +27,7 @@ import uk.co.domcampbell.shoppinglist.network.method.UpdateListNameMethod;
  * Created by Dominic on 31/12/2017.
  */
 
-public class NoConnectionWrapper extends BroadcastReceiver implements ListService {
+public class NoConnectionWrapper implements ListService {
 
     private static final String TAG="NoConnectionWrapper";
 
@@ -139,13 +136,7 @@ public class NoConnectionWrapper extends BroadcastReceiver implements ListServic
         mWrappedListService.fetchListItems(shoppingList, callback);
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        boolean connected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
-
+    public void setConnected(boolean connected) {
         if (this.isConnected == connected){
             return;
         }

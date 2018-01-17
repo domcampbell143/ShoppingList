@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import uk.co.domcampbell.shoppinglist.network.ConnectivityBroadcastReceiver;
 import uk.co.domcampbell.shoppinglist.network.FirebaseListService;
 import uk.co.domcampbell.shoppinglist.network.ListService;
 import uk.co.domcampbell.shoppinglist.network.NoConnectionWrapper;
@@ -27,7 +28,7 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    NoConnectionWrapper providesListServiceWrapper(User user){
+    NoConnectionWrapper providesNoConnectionWrapper(User user){
         return new NoConnectionWrapper(mContext, new FirebaseListService(user));
     }
 
@@ -38,6 +39,6 @@ public class NetworkModule {
 
     @Provides
     BroadcastReceiver providesBroadcastReceiver(NoConnectionWrapper wrapper) {
-        return wrapper;
+        return new ConnectivityBroadcastReceiver(wrapper);
     }
 }
