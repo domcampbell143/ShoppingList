@@ -8,11 +8,11 @@ import java.util.Queue;
 
 public interface NetworkMethodQueue {
 
-    void queueSerializedMethod(String method);
+    void queueNetworkMethod(NetworkMethod networkMethod);
 
     /***
      * Fetch the queue of network methods and remove them from persisted storage
-     * @return queue of serialized network methods
+     * @return queue of network methods
      */
-    Queue<String> getQueuedMethods();
+    Queue<NetworkMethod> getQueuedMethods();
 }

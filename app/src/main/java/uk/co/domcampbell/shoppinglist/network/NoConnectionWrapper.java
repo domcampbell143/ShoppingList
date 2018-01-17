@@ -2,10 +2,6 @@ package uk.co.domcampbell.shoppinglist.network;
 
 import android.util.Log;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
 
@@ -33,12 +29,10 @@ public class NoConnectionWrapper implements ListService {
     private ListService mWrappedListService;
     private NetworkMethodQueue mQueue;
 
-    private ObjectMapper mObjectMapper;
 
     public NoConnectionWrapper(ListService listService, NetworkMethodQueue queue){
         mWrappedListService = listService;
         mQueue = queue;
-        mObjectMapper = new ObjectMapper();
     }
 
     @Override
@@ -46,7 +40,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.addList(shoppingList);
         } else {
-            queueNetworkMethod(new AddListMethod(cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new AddListMethod(cleanShoppingList(shoppingList)));
         }
     }
 
@@ -55,7 +49,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.addUserToNetworkList(shoppingList);
         } else {
-            queueNetworkMethod(new AddUserToListMethod(cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new AddUserToListMethod(cleanShoppingList(shoppingList)));
         }
     }
 
@@ -64,7 +58,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.updateListName(shoppingList);
         } else {
-            queueNetworkMethod(new UpdateListNameMethod(cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new UpdateListNameMethod(cleanShoppingList(shoppingList)));
         }
     }
 
@@ -73,7 +67,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.addItemToList(item, shoppingList);
         } else {
-            queueNetworkMethod(new AddItemToListMethod(item, cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new AddItemToListMethod(item, cleanShoppingList(shoppingList)));
         }
     }
 
@@ -82,7 +76,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.removeItemFromList(item, shoppingList);
         } else {
-            queueNetworkMethod(new RemoveItemFromListMethod(item, cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new RemoveItemFromListMethod(item, cleanShoppingList(shoppingList)));
         }
     }
 
@@ -91,7 +85,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.updateItemInList(item, shoppingList);
         } else {
-            queueNetworkMethod(new UpdateItemInListMethod(item, cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new UpdateItemInListMethod(item, cleanShoppingList(shoppingList)));
         }
     }
 
@@ -100,7 +94,7 @@ public class NoConnectionWrapper implements ListService {
         if (isConnected){
             mWrappedListService.deleteShoppingList(shoppingList);
         } else {
-            queueNetworkMethod(new DeleteListMethod(cleanShoppingList(shoppingList)));
+            mQueue.queueNetworkMethod(new DeleteListMethod(cleanShoppingList(shoppingList)));
         }
     }
 
@@ -146,27 +140,11 @@ public class NoConnectionWrapper implements ListService {
         return new ShoppingList(shoppingList.getUUID(), shoppingList.getListName(), new ArrayList<ListItem>());
     }
 
-    private void queueNetworkMethod(NetworkMethod networkMethod){
-        try{
-            String method = mObjectMapper.writeValueAsString(networkMethod);
-            Log.d(TAG, "Queueing " + method);
-            mQueue.queueSerializedMethod(method);
-        } catch (JsonProcessingException e) {
-            Log.e(TAG, "Failed to write object to json", e);
-        }
-    }
-
     private void executeNetworkMethods(){
-        Queue<String> queue = mQueue.getQueuedMethods();
+        Queue<NetworkMethod> queue = mQueue.getQueuedMethods();
         while (!queue.isEmpty()){
-            String jsonMethod = queue.remove();
-            Log.d(TAG, jsonMethod);
-            try {
-                NetworkMethod networkMethod = mObjectMapper.readValue(jsonMethod, NetworkMethod.class);
-                networkMethod.executeWith(mWrappedListService);
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to convert the following json into NetworkMethod: " + jsonMethod, e);
-            }
+            NetworkMethod networkMethod = queue.remove();
+            networkMethod.executeWith(mWrappedListService);
         }
     }
 }
