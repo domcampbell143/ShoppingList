@@ -136,6 +136,11 @@ public class NoConnectionWrapper implements ListService {
         mWrappedListService.fetchListItems(shoppingList, callback);
     }
 
+    /**
+     * Set the connected status of the wrapper. If the status is change to connected from
+     * not connected, this method will invoke any stored network actions
+     * @param connected
+     */
     public void setConnected(boolean connected) {
         if (this.isConnected == connected){
             return;
