@@ -24,6 +24,12 @@ public class AddItemToListMethod implements NetworkMethod {
     }
 
     @Override
+    public void validate() throws InvalidNetworkMethodException {
+        if (mShoppingList == null) throw new InvalidNetworkMethodException("ShoppingList is null");
+        if (mListItem == null) throw new InvalidNetworkMethodException("ListItem is null");
+    }
+
+    @Override
     public void executeWith(ListService listService) {
         listService.addItemToList(mListItem, mShoppingList);
     }

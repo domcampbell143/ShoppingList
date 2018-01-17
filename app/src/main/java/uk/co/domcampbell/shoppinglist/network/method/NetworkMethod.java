@@ -16,5 +16,11 @@ import uk.co.domcampbell.shoppinglist.network.ListService;
 public interface NetworkMethod {
 
     void executeWith(ListService listService);
+    void validate() throws InvalidNetworkMethodException;
 
+    class InvalidNetworkMethodException extends Exception{
+        InvalidNetworkMethodException(String message){
+            super(message);
+        }
+    }
 }
