@@ -2,10 +2,11 @@ package uk.co.domcampbell.shoppinglist.network;
 
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,12 +26,12 @@ public class FirebaseListService implements ListService {
 
     private static final String TAG="FirebaseListService";
 
-    private Firebase mBaseRef;
+    private DatabaseReference mBaseRef;
     private String mUserUuidString;
 
     public FirebaseListService(User user){
         mUserUuidString = user.getId().toString();
-        mBaseRef = new Firebase("https://dcshoppinglist.firebaseio.com/shoppinglist");
+        mBaseRef = FirebaseDatabase.getInstance().getReference().child("shoppinglist");
     }
 
     @Override
@@ -83,7 +84,7 @@ public class FirebaseListService implements ListService {
 
     @Override
     public void fetchListItems(final ShoppingList shoppingList, final ItemCallback callback) {
-        Firebase listRef = mBaseRef.child(shoppingList.getUUID().toString()+"/list");
+        DatabaseReference listRef = mBaseRef.child(shoppingList.getUUID().toString()+"/list");
         listRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -95,15 +96,15 @@ public class FirebaseListService implements ListService {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "fetchListItems cancelled: "+firebaseError.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "fetchListItems cancelled: "+databaseError.getMessage());
             }
         });
     }
 
     @Override
     public void fetchListName(ShoppingList shoppingList, final NameCallback callback) {
-        Firebase nameRef = mBaseRef.child(shoppingList.getUUID().toString()+"/name");
+        DatabaseReference nameRef = mBaseRef.child(shoppingList.getUUID().toString()+"/name");
         nameRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -111,8 +112,8 @@ public class FirebaseListService implements ListService {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "fetchListName cancelled: "+firebaseError.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "fetchListName cancelled: "+databaseError.getMessage());
             }
         });
     }

@@ -5,9 +5,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
-
-import com.firebase.client.Firebase;
 
 import java.util.UUID;
 
@@ -32,7 +29,6 @@ public class ShoppingListApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Firebase.setAndroidContext(this);
 
         mComponent = DaggerApplicationComponent.builder()
                 .userModule(new UserModule(this))
