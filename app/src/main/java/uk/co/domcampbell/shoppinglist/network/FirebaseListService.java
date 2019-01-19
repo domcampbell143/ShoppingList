@@ -119,13 +119,15 @@ public class FirebaseListService implements ListService {
     }
 
     private ListItem listItemfromSnapshot(DataSnapshot snapshot){
-        String uuid = snapshot.getKey();
+        UUID uuid = UUID.fromString(snapshot.getKey());
         String name = snapshot.child("name").getValue(String.class);
         boolean completed = snapshot.child("completed").getValue(boolean.class);
-        long createdTime = snapshot.child("createdDate").getValue(long.class);
-        long completedTime = snapshot.child("completedDate").getValue(long.class);
+        Date createdTime = new Date(snapshot.child("createdDate").getValue(long.class));
         Date completedDate = null;
-        if (completedTime != 0L) completedDate = new Date(completedTime);
-        return new ListItem(UUID.fromString(uuid), name, completed, new Date(createdTime), completedDate);
+        DataSnapshot completedDateSnapshot = snapshot.child("completedDate");
+        if (completedDateSnapshot.exists()) {
+            completedDate = new Date(completedDateSnapshot.getValue(long.class));
+        }
+        return new ListItem(uuid, name, completed, createdTime, completedDate);
     }
 }
